@@ -1,7 +1,6 @@
 package com.ksoft.spring_mvc.controllers;
 
 import com.ksoft.spring_mvc.dao.ServiceRepository;
-import com.ksoft.spring_mvc.entity.Room;
 import com.ksoft.spring_mvc.entity.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +16,13 @@ public class ServiceController {
     private ServiceRepository repository;
 
     @PostMapping("/service")
-    public Response addRoom(@RequestBody Service service) {
+    public ApiResponse addRoom(@RequestBody Service service) {
         repository.save(service);
-        return Response.success("Tạo dịch vụ thành công");
+        return ApiResponse.success("Tạo dịch vụ thành công");
     }
 
     @GetMapping("/services")
-    public List<Service> getAllRooms() {
+    public List<Service> getAllService() {
         return repository.findAll();
     }
 }

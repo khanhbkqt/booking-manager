@@ -16,9 +16,9 @@ public class RoomController {
     private RoomRepository repository;
 
     @PostMapping("/room")
-    public Response addRoom(@RequestBody Room room) {
+    public ApiResponse addRoom(@RequestBody Room room) {
         repository.save(room);
-        return Response.success("Tạo phòng thành công");
+        return ApiResponse.success("Tạo phòng thành công");
     }
 
     @GetMapping("/rooms")

@@ -21,7 +21,7 @@ public class BookingController {
     @Autowired RoomRepository roomRepository;
 
     @PostMapping("/booking")
-    public Response addRoom(@RequestBody BookingRequestData requestData) {
+    public ApiResponse addRoom(@RequestBody BookingRequestData requestData) {
 
         Long roomId = requestData.getRoomId();
         Optional<Room> room = roomRepository.findById(roomId);
@@ -34,14 +34,19 @@ public class BookingController {
                     requestData.getCheckInTime(),
                     requestData.getNumOfGuesses());
             repository.save(booking);
-            return Response.success("Tạo booking thành công");
+            return ApiResponse.success("Tạo booking thành công");
         } else {
-            return Response.failed("Tạo dịch vụ thất bại. Phòng không tồn tại");
+            return ApiResponse.failed("Tạo booking thất bại. Phòng không tồn tại");
         }
     }
 
     @GetMapping("/activeBookings")
     public List<Booking> getActiveBookings() {
         return repository.findByCheckOutTimeIsNull();
+    }
+
+    @GetMapping("/closedBookings")
+    public List<Booking> getClosedBookings() {
+        return repository.findByCheckOutTimeIsNotNull();
     }
 }
