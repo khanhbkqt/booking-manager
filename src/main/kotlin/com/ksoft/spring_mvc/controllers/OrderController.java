@@ -26,7 +26,7 @@ public class OrderController {
     OrderRepository orderRepository;
 
     @GetMapping("/orders")
-    public List<Order> getOrders(@RequestParam("bookingId") String bookingId) {
+    public List<Order> getOrders(@RequestParam("bookingId") Long bookingId) {
         return orderRepository.findByBookingId(bookingId);
     }
 

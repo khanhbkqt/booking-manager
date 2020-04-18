@@ -21,7 +21,8 @@ public class BookingController {
     @Autowired
     private BookingRepository repository;
 
-    @Autowired RoomRepository roomRepository;
+    @Autowired
+    private RoomRepository roomRepository;
 
     @PostMapping("/booking")
     public ApiResponse addBooking(@RequestBody BookingRequestData requestData) {
@@ -31,7 +32,7 @@ public class BookingController {
 
         // Tồn tại room với id được gửi lên
         if (room.isPresent()) {
-
+            // Kiểm tra room có available không
             if (isRoomAvailable(room.get())) {
                 Booking booking = new Booking(
                         room.get(),
