@@ -24,20 +24,26 @@ public class BookingController {
     @Autowired RoomRepository roomRepository;
 
     @PostMapping("/booking")
-    public ApiResponse addRoom(@RequestBody BookingRequestData requestData) {
+    public ApiResponse addBooking(@RequestBody BookingRequestData requestData) {
 
         Long roomId = requestData.getRoomId();
         Optional<Room> room = roomRepository.findById(roomId);
 
         // Tồn tại room với id được gửi lên
         if (room.isPresent()) {
-            Booking booking = new Booking(
-                    room.get(),
-                    requestData.getCustomerName(),
-                    requestData.getCheckInTime(),
-                    requestData.getNumOfGuesses());
-            repository.save(booking);
-            return ApiResponse.success("Tạo booking thành công");
+
+            if (isRoomAvailable(room.get())) {
+                Booking booking = new Booking(
+                        room.get(),
+                        requestData.getCustomerName(),
+                        requestData.getCheckInTime(),
+                        requestData.getNumOfGuesses());
+                repository.save(booking);
+                return ApiResponse.success("Tạo booking thành công");
+            } else {
+                return ApiResponse.failed("Phòng đã được sử dụng");
+            }
+
         } else {
             return ApiResponse.failed("Tạo booking thất bại. Phòng không tồn tại");
         }
@@ -70,5 +76,10 @@ public class BookingController {
         } else {
             return ApiResponse.failed("Booking không tồn tại");
         }
+    }
+
+    private boolean isRoomAvailable(Room room) {
+        List<Booking> bookings = repository.findByRoomIdAndCheckOutTimeIsNull(room.getId());
+        return bookings.isEmpty();
     }
 }
