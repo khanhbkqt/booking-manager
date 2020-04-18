@@ -1,4 +1,4 @@
-package com.ksoft.spring_mvc.controllers;
+package com.ksoft.spring_mvc.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -4,6 +4,9 @@ import com.ksoft.spring_mvc.dao.BookingRepository;
 import com.ksoft.spring_mvc.dao.RoomRepository;
 import com.ksoft.spring_mvc.entity.Booking;
 import com.ksoft.spring_mvc.entity.Room;
+import com.ksoft.spring_mvc.model.ApiResponse;
+import com.ksoft.spring_mvc.model.BookingRequestData;
+import com.ksoft.spring_mvc.model.CheckoutRequestData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,5 +51,24 @@ public class BookingController {
     @GetMapping("/closedBookings")
     public List<Booking> getClosedBookings() {
         return repository.findByCheckOutTimeIsNotNull();
+    }
+
+    @PostMapping("/checkOut")
+    public ApiResponse checkout(@RequestBody CheckoutRequestData data) {
+        Optional<Booking> bookingOpt = repository.findById(data.getBookingId());
+        if (bookingOpt.isPresent()) {
+            Booking booking = bookingOpt.get();
+            if (booking.getCheckOutTime() != null) {
+                return ApiResponse.failed("Booking đã được checkout trước đó");
+            } else if (booking.getCheckInTime().after(data.getCheckoutTime())) {
+                return ApiResponse.failed("CheckoutTime phải lớn hơn CheckInTime");
+            } else {
+                booking.setCheckOutTime(data.getCheckoutTime());
+                repository.save(booking);
+                return ApiResponse.success("Checkout thành công");
+            }
+        } else {
+            return ApiResponse.failed("Booking không tồn tại");
+        }
     }
 }
